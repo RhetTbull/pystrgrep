@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pystrgrep"
-version = "0.4.0"
+version = "0.5.0"
 description = "grep/search for pattern in python strings"
 authors = ["Rhet Turnbull <rturnbull+git@gmail.com>"]
 license = "MIT"
@@ -38,4 +38,4 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-pystrgrep = 'pystrgrep:main'
+pystrgrep = 'pystrgrep.main:app'
