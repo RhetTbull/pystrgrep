@@ -17,6 +17,8 @@ from ._version import __version__
 
 rich.traceback.install()
 
+app = typer.Typer()
+
 
 def get_str_value(node: ast.AST) -> str:
     """Return string value of ast node if it is a string constant, otherwise None
@@ -87,6 +89,7 @@ def version_callback(value: bool):
         raise typer.Exit()
 
 
+@app.command()
 def grep(
     version: Optional[bool] = typer.Option(
         None, "--version", callback=version_callback, is_eager=True
@@ -136,9 +139,5 @@ def grep(
                     )
 
 
-def main():
-    typer.run(grep)
-
-
 if __name__ == "__main__":
-    main()
+    app()
