@@ -6,6 +6,12 @@ Searches through python files and extracts all string constants searching for pa
 
 Optionally also searches through docstrings.
 
+## Installation
+
+`pipx install git+https://github.com/RhetTbull/pystrgrep.git`
+
+## Usage
+
 ```
 Usage: pystrgrep [OPTIONS] PATTERN FILE ...
 
