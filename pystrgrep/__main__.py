@@ -139,5 +139,9 @@ def grep(
                     )
 
 
+def main():
+    typer.run(grep)
+
+
 if __name__ == "__main__":
     app()
