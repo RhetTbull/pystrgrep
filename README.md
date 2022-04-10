@@ -8,6 +8,8 @@ Optionally also searches through docstrings.
 
 ## Installation
 
+Use [pipx](https://pypa.github.io/pipx/):
+
 `pipx install git+https://github.com/RhetTbull/pystrgrep.git`
 
 ## Usage
