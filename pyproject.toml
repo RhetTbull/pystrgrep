@@ -1,0 +1,41 @@
+[tool.poetry]
+name = "pystrgrep"
+version = "0.1.0"
+description = "grep/search for pattern in python strings"
+authors = ["Rhet Turnbull <rturnbull+git@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/RhetTbull/pystrgrep"
+repository = "https://github.com/RhetTbull/pystrgrep"
+keywords = ["python", "cli"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+
+include = [
+    "LICENSE",
+]
+
+
+[tool.poetry.dependencies]
+python = "^3.8"
+typer = "^0.4.1"
+rich = "^12.2.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+pystrgrep = 'pystrgrep:main'
