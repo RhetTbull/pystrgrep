@@ -24,7 +24,7 @@ Arguments:
   FILE ...  [required]
 
 Options:
-  -d, --docstring                 Search in docstrings
+  --version
   -i, --ignore-case               Ignore case
   -n, --line-number               Show line numbers
   --install-completion [bash|zsh|fish|powershell|pwsh]
@@ -33,4 +33,4 @@ Options:
                                   Show completion for the specified shell, to
                                   copy it or customize the installation.
   --help                          Show this message and exit.
-  ```
+```

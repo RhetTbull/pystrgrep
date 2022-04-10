@@ -1,8 +1,6 @@
 """grep/search for pattern in python strings
 
 Searches through python files and extracts all string constants searching for pattern.
-
-Optionally also searches through docstrings.
 """
 
 import ast
@@ -10,23 +8,21 @@ import re
 from pathlib import Path
 from typing import List, Optional
 
-import rich.console
+from rich.console import Console
+from rich.text import Text
 import typer
 
 from ._version import __version__
 
 
-def get_str_value(node: ast.AST, docstring: bool) -> str:
-    """Return string value of ast node if it is a string constant or docstring
+def get_str_value(node: ast.AST) -> str:
+    """Return string value of ast node if it is a string constant
 
     Args:
         node: ast node
-        docstring: search in docstrings
     """
     if isinstance(node, ast.Constant) and isinstance(node.value, str):
         return node.value
-    elif docstring and isinstance(node, ast.FunctionDef):
-        return ast.get_docstring(node) or ""
     else:
         return None
 
@@ -39,18 +35,22 @@ def print_match(
     pattern: str,
     ignore_case: bool,
 ):
+    """Print match from grep"""
     filename_str = f"{filename}:{node.lineno}:" if line_number else f"{filename}:"
     line = line[:-1] if line.endswith("\n") else line
+
     line_pre = line[: node.col_offset]
-    line_value = line[node.col_offset : node.end_col_offset]
     line_post = line[node.end_col_offset :]
-    flags = re.IGNORECASE if ignore_case else 0
-    regex = re.compile(f"({pattern})", flags=flags)
     line_pre = escape_brackets(line_pre)
-    line_value = escape_brackets(line_value)
     line_post = escape_brackets(line_post)
-    line_value = regex.sub(r"[bold red]\1[/]", line_value)
-    console = rich.console.Console(highlight=False)
+
+    flags = re.IGNORECASE if ignore_case else 0
+    line_value = line[node.col_offset : node.end_col_offset]
+    line_values = re.split(pattern, line_value, flags=flags)
+    line_values = [escape_brackets(v) for v in line_values]
+    line_value = f"[bold red]{pattern}[/]".join(line_values)
+
+    console = Console(highlight=False)
     console.print(f"{filename_str}{line_pre}{line_value}{line_post}")
 
 
@@ -60,6 +60,7 @@ def escape_brackets(value: str) -> str:
 
 
 def version_callback(value: bool):
+    """Print version and exit"""
     if value:
         typer.echo(f"pystrgrep: {__version__}")
         raise typer.Exit()
@@ -68,9 +69,6 @@ def version_callback(value: bool):
 def grep(
     version: Optional[bool] = typer.Option(
         None, "--version", callback=version_callback, is_eager=True
-    ),
-    docstring: bool = typer.Option(
-        False, "--docstring", "-d", is_flag=True, help="Search in docstrings"
     ),
     ignore_case: bool = typer.Option(
         False, "--ignore-case", "-i", is_flag=True, help="Ignore case"
@@ -88,13 +86,15 @@ def grep(
     ),
 ):
     """grep for PATTERN in python string constants inside FILE(s)"""
+
+    pattern = pattern.replace("\\\\", "\\")
     for f in files:
         with open(f, "r") as fh:
             lines = fh.readlines()
         contents = "".join(lines)
 
         for node in ast.walk(ast.parse(contents)):
-            if value := get_str_value(node, docstring):
+            if value := get_str_value(node):
                 if re.search(
                     pattern,
                     value,
