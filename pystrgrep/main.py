@@ -12,10 +12,13 @@ import rich.traceback
 import typer
 from rich.console import Console
 from rich.text import Text
+from rich.table import Table
 
 from ._version import __version__
 
 rich.traceback.install()
+
+HIGHLIGHT_STYLE = "bold red"
 
 app = typer.Typer()
 
@@ -49,8 +52,8 @@ def print_match(
     # line_pre (before the node), line_value (the node), and line_post (after the node)
     line_pre = line[: node.col_offset]
     line_post = line[node.end_col_offset :]
-    line_pre = escape_brackets(line_pre)
-    line_post = escape_brackets(line_post)
+    line_pre = Text(escape_brackets(line_pre), style="")
+    line_post = Text(escape_brackets(line_post), style="")
 
     # build up the value to print while escaping brackets (for rich)
     # and highlighting the match
@@ -61,20 +64,23 @@ def print_match(
     match_spans = [
         match.span() for match in re.finditer(pattern, line_value, flags=flags)
     ]
-    new_line_value = ""
+    new_line_values = []
     last_end = 0
     for start, end in match_spans:
-        new_line_value += escape_brackets(line_value[last_end:start])
-        new_line_value += (
-            f"[bold red]{escape_brackets(line_value[start:end])}[/bold red]"
+        new_line_values.extend(
+            (
+                Text(escape_brackets(line_value[last_end:start]), style=""),
+                Text(escape_brackets(line_value[start:end]), style=HIGHLIGHT_STYLE),
+            )
         )
         last_end = end
     if last_end != len(line_value):
-        new_line_value += escape_brackets(line_value[last_end:])
-    line_value = new_line_value
+        new_line_values.append(Text(escape_brackets(line_value[last_end:]), style=""))
 
-    console = Console(highlight=False)
-    console.print(f"{filename_str}{line_pre}{line_value}{line_post}")
+    table = Table("", box=None, padding=(0, 0), show_header=False)
+    table.add_row(filename_str, line_pre, *new_line_values, line_post)
+    console = Console(highlight=False, emoji=False)
+    console.print(table)
 
 
 def escape_brackets(value: str) -> str:
