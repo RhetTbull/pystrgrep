@@ -12,6 +12,10 @@ Use [pipx](https://pypa.github.io/pipx/):
 
 `pipx install git+https://github.com/RhetTbull/pystrgrep.git`
 
+## Example
+
+![Example image](https://raw.githubusercontent.com/RhetTbull/pystrgrep/main/docs/images/example1.png)
+
 ## Usage
 
 ```
